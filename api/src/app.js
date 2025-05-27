@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const vendingRoutes = require('./routes/VendingRoutes');
 
 const app = express();
 
+app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json());
 app.use('/api', vendingRoutes);
 

@@ -1,0 +1,30 @@
+.product-grid {
+  padding: 2rem 0;
+
+  .product-card {
+    border: 2px solid #dee2e6;
+    transition: transform 0.2s;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-id {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #6c757d;
+    }
+
+    .product-name {
+      color: #343a40;
+      margin: 0.5rem 0;
+    }
+
+    .product-price {
+      font-size: 1.2rem;
+      color: #28a745;
+      font-weight: bold;
+    }
+  }
+}
