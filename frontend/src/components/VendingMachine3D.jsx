@@ -1,7 +1,6 @@
 import 'aframe';
 import React, { useState } from 'react';
 import VendingMachine from '../assets/objects/vending_machine_2.glb';
-import Soda from '../assets/objects/chips.glb';
 
 const API_URL = "http://localhost:4200"; // Or your deployed API URL
 
@@ -20,6 +19,8 @@ export default function VendingMachine3D({
 }) {
   // State for product number input
   const [productNumberInput, setProductNumberInput] = useState('');
+  // Cart state: array of product objects
+  const [cart, setCart] = useState([]);
 
   // Handler for selecting product by number
   const handleSelectProductByNumber = () => {
@@ -27,6 +28,17 @@ export default function VendingMachine3D({
     if (!isNaN(idx) && idx >= 0 && idx < products.length) {
       onSelectProduct(products[idx].id);
     }
+  };
+
+  // Handler for confirming purchase: add selected product to cart
+  const handleConfirmPurchase = () => {
+    if (selectedProductId) {
+      const selectedProduct = products.find(p => p.id === selectedProductId);
+      if (selectedProduct) {
+        setCart([...cart, selectedProduct]);
+      }
+    }
+    onConfirmPurchase();
   };
 
   return (
@@ -54,7 +66,7 @@ export default function VendingMachine3D({
         <a-light type="point" color="#fff" intensity="1.5" position="-2 4 -4" distance="20"></a-light>
 
         {/* Camera */}
-        <a-entity camera look-controls position="0 1 -2.2"></a-entity>
+        <a-entity camera look-controls wasd-controls position="0 1 -2.2"></a-entity>
 
         {/* Vending Machine Model */}
         <a-gltf-model
@@ -77,8 +89,8 @@ export default function VendingMachine3D({
           const scale = product.scale
             ? `${product.scale.x} ${product.scale.y} ${product.scale.z}`
             : "0.07 0.07 0.07";
-          // Always use API URL for assets
           const glbPath = `${API_URL}/src/assets/objects/${product.glb}`;
+          const isSelected = selectedProductId === product.id;
 
           return (
             <React.Fragment key={product.id}>
@@ -91,8 +103,9 @@ export default function VendingMachine3D({
               <a-text
                 value={`#${product.id}`}
                 align="center"
-                color="#fff"
-                width="1.2"
+                color={isSelected ? "#ffd700" : "#fff"}
+                width={isSelected ? "1.5" : "1"}
+                font={isSelected ? "mozillavr" : "dejavu"}
                 position={
                   product.position
                     ? `${product.position.x} ${product.position.y + 0.25} ${product.position.z + 0.18}`
@@ -105,19 +118,48 @@ export default function VendingMachine3D({
               ></a-text>
               {/* Product name and price below */}
               <a-text
-                value={`${product.name} (${product.price} MAD)`}
+                value={product.name}
                 align="center"
-                color="#fff"
-                width="2"
+                color={isSelected ? "#ffd700" : "#fff"}
+                width={isSelected ? "1.5" : "1"}
+                font={isSelected ? "mozillavr" : "dejavu"}
                 position={
                   product.position
-                    ? `${product.position.x} ${product.position.y - 0.25} ${product.position.z}`
+                    ? `${product.position.x} ${product.position.y - 0.07} ${product.position.z}`
                     : (() => {
                         const col = idx % 3;
                         const row = Math.floor(idx / 3);
                         return `${-0.65 + col * 0.45} ${1.5 - row * 0.5 - 0.25} -5`;
                       })()
                 }
+              ></a-text>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Cart display at the bottom */}
+        {cart.length > 0 && cart.map((product, idx) => {
+          // Arrange cart items horizontally at the bottom
+          const cartX = -1.2 + idx * 0.35;
+          const cartY = -1.2;
+          const cartZ = -4.5;
+          const scale = product.scale
+            ? `${product.scale.x} ${product.scale.y} ${product.scale.z}`
+            : "0.07 0.07 0.07";
+          const glbPath = `${API_URL}/src/assets/objects/${product.glb}`;
+          return (
+            <React.Fragment key={`cart-${idx}`}>
+              <a-gltf-model
+                src={glbPath}
+                scale={scale}
+                position={`${cartX} ${cartY} ${cartZ}`}
+              ></a-gltf-model>
+              <a-text
+                value={product.name}
+                align="center"
+                color="#fff"
+                width="1.2"
+                position={`${cartX} ${cartY - 0.18} ${cartZ}`}
               ></a-text>
             </React.Fragment>
           );
@@ -207,7 +249,7 @@ export default function VendingMachine3D({
             </button>
             <button
               className="btn btn-primary"
-              onClick={onConfirmPurchase}
+              onClick={handleConfirmPurchase}
               disabled={!selectedProductId}
             >
               Confirm Purchase

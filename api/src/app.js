@@ -5,7 +5,15 @@ const vendingRoutes = require('./routes/VendingRoutes');
 
 const app = express();
 
-app.use(cors()); // Enable CORS for all routes
+const corsOptions = {
+    origin: '*', // Allow only this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+};
+const path = require('path');
+app.use('/src/assets/objects', cors(corsOptions),express.static(path.join(__dirname, 'assets/objects')));
+
+app.use(cors()); 
 app.use(bodyParser.json());
 app.use('/api', vendingRoutes);
 
