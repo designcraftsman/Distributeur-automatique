@@ -30,8 +30,10 @@ function App() {
   }, []);
 
   // Insert coin handler
-  const handleInsertCoin = () => {
-    const amount = parseFloat(coinInput);
+  const handleInsertCoin = (amountFromButton) => {
+    const amount = amountFromButton !== undefined
+      ? amountFromButton
+      : parseFloat(coinInput);
     if (isNaN(amount) || amount <= 0) {
       setMessage('Please enter a valid amount.');
       return;
@@ -71,8 +73,16 @@ function App() {
   };
 
   // Confirm purchase handler
-  const handleConfirmPurchase = () => {
-    fetch(`${API_URL}/confirm-purchase`, { method: 'POST' })
+  const handleConfirmPurchase = (cart) => {
+    if (!cart || cart.length === 0) {
+      setMessage('Panier vide.');
+      return;
+    }
+    fetch(`${API_URL}/confirm-purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cart })
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -108,6 +118,7 @@ function App() {
         coinInput={coinInput}
         setCoinInput={setCoinInput}
         onInsertCoin={handleInsertCoin}
+        setBalance={setBalance}
         onSelectProduct={handleSelectProduct}
         selectedProductId={selectedProductId}
         onConfirmPurchase={handleConfirmPurchase}

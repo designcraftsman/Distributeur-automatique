@@ -1,14 +1,21 @@
 import 'aframe';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import 'aframe-environment-component';
 import VendingMachine from '../assets/objects/vending_machine_2.glb';
+import TEN_DIRHAMS from '../assets/coins/10dh.svg';
+import FIVE_DIRHAMS from '../assets/coins/5dh.svg';
+import TWO_DIRHAMS from '../assets/coins/2dh.svg';
+import ONE_DIRHAM from '../assets/coins/1dh.svg';
+import HALF_DIRHAM from '../assets/coins/0.5dh.svg';
 
-const API_URL = "http://localhost:4200"; // Or your deployed API URL
+const API_URL = "http://localhost:4200";
 
 export default function VendingMachine3D({
   products,
   balance,
   coinInput,
   setCoinInput,
+  setBalance,
   onInsertCoin,
   onSelectProduct,
   selectedProductId,
@@ -22,36 +29,128 @@ export default function VendingMachine3D({
   // Cart state: array of product objects
   const [cart, setCart] = useState([]);
 
+  // Products to display at the bottom after purchase
+  const [deliveredProducts, setDeliveredProducts] = useState([]);
+
+  // Show selected product in panel
+  const selectedProduct = products.find(p => p.id === selectedProductId);
+
   // Handler for selecting product by number
   const handleSelectProductByNumber = () => {
     const idx = parseInt(productNumberInput, 10) - 1;
     if (!isNaN(idx) && idx >= 0 && idx < products.length) {
-      onSelectProduct(products[idx].id);
+      const product = products[idx];
+      if (balance < product.price) {
+        setProductNumberInput('');
+        return;
+      }
+      onSelectProduct(product.id);
+      setProductNumberInput('');
     }
   };
 
-  // Handler for confirming purchase: add selected product to cart
-  const handleConfirmPurchase = () => {
-    if (selectedProductId) {
-      const selectedProduct = products.find(p => p.id === selectedProductId);
-      if (selectedProduct) {
-        setCart([...cart, selectedProduct]);
-      }
+  // Add selected product to cart
+  const handleAddProduct = () => {
+    if (selectedProduct) {
+      setCart([...cart, selectedProduct]);
     }
-    onConfirmPurchase();
   };
+
+  // Group cart items by id for display
+  const cartSummary = cart.reduce((acc, item) => {
+    const found = acc.find(i => i.id === item.id);
+    if (found) found.quantity += 1;
+    else acc.push({ ...item, quantity: 1 });
+    return acc;
+  }, []);
+
+  // Calculate total
+  const total = cart.reduce((sum, item) => sum + (item.price || 0), 0);
+
+  // Handler for keypad press
+  const handleKeypadPress = (num) => {
+    const newInput = productNumberInput + num.toString();
+    setProductNumberInput(newInput);
+  };
+
+  // Disable product selection if not enough balance for the cheapest product
+  const minProductPrice = products.length > 0 ? Math.min(...products.map(p => p.price)) : 0;
+  const canSelectProduct = balance >= minProductPrice;
+
+  // Handler for keypad "OK" button
+  const handleKeypadOk = () => {
+  if (!canSelectProduct) return;
+  const idx = parseInt(productNumberInput, 10) - 1;
+  if (!isNaN(idx) && idx >= 0 && idx < products.length) {
+    const product = products[idx];
+    if (balance - total < product.price) { // check remaining balance
+      setProductNumberInput('');
+      return;
+    }
+    setCart(prev => [...prev, product]);
+    setProductNumberInput('');
+  }
+};
+
+  // Handler for keypad "C" (clear) button
+  const handleKeypadClear = () => {
+    setProductNumberInput('');
+  };
+
+  // Keypad numbers
+  const keypad = [0,1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  // Clear cart when change is returned (purchase confirmed)
+  useEffect(() => {
+    if (change && cart.length > 0) {
+      setDeliveredProducts(cart);
+      setCart([]);
+    }
+  }, [change]); // Only runs when change is set (purchase confirmed)
+
+  // Handler for confirm purchase, sends cart to parent
+  const handleConfirmPurchase = () => {
+  if (cart.length === 0) return;
+  const cartToSend = cart.reduce((acc, item) => {
+    const found = acc.find(i => i.id === item.id);
+    if (found) found.quantity += 1;
+    else acc.push({ id: item.id, quantity: 1 });
+    return acc;
+  }, []);
+  if (typeof onConfirmPurchase === 'function') {
+    onConfirmPurchase(cartToSend, balance); // <-- send original balance
+  }
+};
+
+  // Reset all state
+  const handleReset = () => {
+    setCart([]);
+    setDeliveredProducts([]);
+    setProductNumberInput('');
+    if (typeof setCoinInput === 'function') setCoinInput('');
+    // Optionally, you can call onCancel or trigger a parent reset if needed
+    if (typeof onCancel === 'function') onCancel();
+  };
+
+  const [animatingCoin, setAnimatingCoin] = useState(null);
+
+  // Helper for coin positions (adjust as needed)
+  const coinPositions = [
+    { left: 0 }, { left: 60 }, { left: 120 }, { left: 180 }, { left: 240 }
+  ];
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <a-scene
         embedded
+    
         style={{ width: '100vw', height: '100vh' }}
-        background="color: #b3e0ff"
+    
       >
         {/* Sky and ground for a more immersive environment */}
         <a-sky color="#b3e0ff"></a-sky>
         <a-plane
-          color="#8fd19e"
+          color="red"
           rotation="-90 0 0"
           width="30"
           height="30"
@@ -66,16 +165,77 @@ export default function VendingMachine3D({
         <a-light type="point" color="#fff" intensity="1.5" position="-2 4 -4" distance="20"></a-light>
 
         {/* Camera */}
-        <a-entity camera look-controls wasd-controls position="0 1 -2.2"></a-entity>
+        <a-entity camera position="0 1 -2.5" rotation="-10 0 0"></a-entity>
 
         {/* Vending Machine Model */}
         <a-gltf-model
           id="projectorScreen"
           src={VendingMachine}
           scale="1 1 1"
-          position="0 -5 -10"
+          position="0 -5 -8.5"
           rotation="0 0 0"
         ></a-gltf-model>
+        <a-box
+          color="#000"
+          width="0.6"
+          depth="0.01"
+          align="center"
+          position="1.33 1.5 -6"
+        />
+        <a-text
+          value={
+            cart.length === 0
+              ? "Panier vide"
+              : cartSummary.map(item => `${item.name} (x${item.quantity})`).join('\n')
+          }
+          color="#fff"
+          width="1.6"
+          align="center"
+          position="1.33 1.65 -5.95" // slightly in front of the box
+        />
+        <a-text
+          value={(balance - total).toFixed(2) + " MAD"}
+          color="#fff"
+          width="2"
+          align="center"
+          position="1.33 0.275 -6"
+        />
+        <a-box
+          color="#000"
+          width="0.6"
+          depth="0.01"
+          align="center"
+          position="1.33 -1.5 -6"
+        />
+        {/* Show returned coins as images in front of the box */}
+        {change && typeof change === 'object' && Object.keys(change).length > 0 && (
+          Object.entries(change).map(([coin, qty], idx) => {
+            let coinImg;
+            if (coin === "10" || coin === "10.0") coinImg = TEN_DIRHAMS;
+            else if (coin === "5" || coin === "5.0") coinImg = FIVE_DIRHAMS;
+            else if (coin === "2" || coin === "2.0") coinImg = TWO_DIRHAMS;
+            else if (coin === "1" || coin === "1.0") coinImg = ONE_DIRHAM;
+            else if (coin === "0.5") coinImg = HALF_DIRHAM;
+            else coinImg = null;
+            // Spread coins horizontally in front of the box
+            const x = 1.33 - 0.15 + idx * 0.15;
+            const y = -1.65;
+            const z = -5.95;
+            return (
+              coinImg && (
+                <a-image
+                  key={coin}
+                  src={coinImg}
+                  position={`${x} ${y} ${z}`}
+                  width="0.12"
+                  height="0.12"
+                  alt={`${coin} MAD`}
+                >
+                </a-image>
+              )
+            );
+          })
+        )}
 
         {/* Products as colored boxes in front of the machine, with numbers */}
         {products.map((product, idx) => {
@@ -98,13 +258,34 @@ export default function VendingMachine3D({
                 src={glbPath}
                 scale={scale}
                 position={pos}
+                events={{
+                  click: () => {
+                    if (canSelectProduct && balance >= product.price) {
+                      onSelectProduct(product.id);
+                    }
+                  }
+                }}
+                material={canSelectProduct && balance >= product.price ? '' : 'color: #888; opacity: 0.5'}
               ></a-gltf-model>
-              {/* Product number above */}
+              {/* Add a clickable overlay for React */}
+              <a-entity
+                geometry="primitive: plane; width: 0.3; height: 0.3"
+                material={`color: #fff; opacity: 0${canSelectProduct && balance >= product.price ? '' : '.4'}`}
+                position={pos}
+                events={{
+                  click: () => {
+                    if (canSelectProduct && balance >= product.price) {
+                      onSelectProduct(product.id);
+                    }
+                  }
+                }}
+              ></a-entity>
+              {/* Product number and price above */}
               <a-text
-                value={`#${product.id}`}
+                value={`#${product.id} (${product.price} MAD)`}
                 align="center"
                 color={isSelected ? "#ffd700" : "#fff"}
-                width={isSelected ? "1.5" : "1"}
+                width={isSelected ? "1.3" : "1.2"}
                 font={isSelected ? "mozillavr" : "dejavu"}
                 position={
                   product.position
@@ -116,7 +297,7 @@ export default function VendingMachine3D({
                       })()
                 }
               ></a-text>
-              {/* Product name and price below */}
+              {/* Product name below */}
               <a-text
                 value={product.name}
                 align="center"
@@ -138,11 +319,10 @@ export default function VendingMachine3D({
         })}
 
         {/* Cart display at the bottom */}
-        {cart.length > 0 && cart.map((product, idx) => {
-          // Arrange cart items horizontally at the bottom
-          const cartX = -1.2 + idx * 0.35;
-          const cartY = -1.2;
-          const cartZ = -4.5;
+        {deliveredProducts.length > 0 && deliveredProducts.map((product, idx) => {
+          const cartX = (-0.8) + (idx % 3) * 0.2;
+          const cartY = -1.8;
+          const cartZ = -5;
           const scale = product.scale
             ? `${product.scale.x} ${product.scale.y} ${product.scale.z}`
             : "0.07 0.07 0.07";
@@ -154,129 +334,250 @@ export default function VendingMachine3D({
                 scale={scale}
                 position={`${cartX} ${cartY} ${cartZ}`}
               ></a-gltf-model>
-              <a-text
-                value={product.name}
-                align="center"
-                color="#fff"
-                width="1.2"
-                position={`${cartX} ${cartY - 0.18} ${cartZ}`}
-              ></a-text>
             </React.Fragment>
           );
         })}
 
-        {/* UI Panel as HTML overlay */}
+        
+      </a-scene>
+      {/* Panel merged here */}
+      <div
+        className="vending-panel mx-auto"
+        style={{
+          position: 'absolute',
+          right: 20,
+          top: 30,
+          zIndex: 10
+        }}
+      >
+        <div className="vending-display bg-dark text-white p-3 rounded">
+          Inseré: {(balance - total).toFixed(2)} MAD
+        </div>
+        <div className='d-flex my-3 gap-2 coin-row' style={{ position: 'relative', height: 60 }}>
+          {[TEN_DIRHAMS, FIVE_DIRHAMS, TWO_DIRHAMS, ONE_DIRHAM, HALF_DIRHAM].map((img, idx) => (
+            <div className='col-2' key={idx} style={{ position: 'relative' }}>
+              <img
+                src={img}
+                className='w-100'
+                alt={`${[10, 5, 2, 1, 0.5][idx]} Dirhams`}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
+                  zIndex: animatingCoin === idx ? 100 : 1,
+                  position: animatingCoin === idx ? 'absolute' : 'static',
+                  left: animatingCoin === idx ? 0 : undefined,
+                  top: animatingCoin === idx ? 0 : undefined,
+                  // Animate to the top of the balance text
+                  transform: animatingCoin === idx
+                    ? 'translate(-180px, 150px) scale(0.7)' // adjust as needed
+                    : undefined,
+                  transition: animatingCoin === idx
+                    ? 'transform 0.7s cubic-bezier(.4,2,.6,1)'
+                    : 'transform 0.2s'
+                }}
+                onClick={() => {
+                  setAnimatingCoin(idx);
+                  setTimeout(() => {
+                    setAnimatingCoin(null);
+                    onInsertCoin([10, 5, 2, 1, 0.5][idx]);
+                  }, 700); // match animation duration
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = animatingCoin === idx ? e.currentTarget.style.transform : 'scale(1.2)'}
+                onMouseLeave={e => e.currentTarget.style.transform = animatingCoin === idx ? e.currentTarget.style.transform : 'scale(1)'}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Cart and Keypad side by side */}
         <div
+         className='fs-6'
           style={{
-            position: 'absolute',
-            left: 20,
-            top: 20,
-            background: 'rgba(30,30,30,0.95)',
-            borderRadius: 12,
-            padding: 24,
-            minWidth: 320,
-            color: '#fff',
-            boxShadow: '0 4px 24px #0008',
-            textAlign: 'center',
-            zIndex: 10
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: 4,
+            marginTop: 16,
+            width: 480,
+            maxWidth: '100%',
           }}
         >
-          <h2>Vending Machine</h2>
-          <div className="mb-2">
-            <strong>Balance:</strong> {balance} MAD
-          </div>
-          <div className="mb-2 d-flex align-items-center justify-content-center">
-            <input
-              type="number"
-              min="0"
-              step="0.1"
-              value={coinInput}
-              onChange={e => setCoinInput(e.target.value)}
-              style={{
-                width: 80,
-                marginRight: 8,
-                borderRadius: 4,
-                border: '1px solid #888',
-                padding: 4
-              }}
-              placeholder="Insert coin"
-            />
-            <button
-              className="btn btn-success me-2"
-              onClick={onInsertCoin}
-              style={{ marginRight: 8 }}
-            >
-              Insert Coin
-            </button>
-          </div>
-          {/* Product selection by number */}
-          <div className="mb-2 d-flex align-items-center justify-content-center">
-            <input
-              type="number"
-              min="1"
-              max={products.length}
-              value={productNumberInput}
-              onChange={e => setProductNumberInput(e.target.value)}
-              style={{
-                width: 80,
-                marginRight: 8,
-                borderRadius: 4,
-                border: '1px solid #888',
-                padding: 4
-              }}
-              placeholder="Product #"
-            />
-            <button
-              className="btn btn-primary"
-              onClick={handleSelectProductByNumber}
-              disabled={
-                !productNumberInput ||
-                isNaN(productNumberInput) ||
-                productNumberInput < 1 ||
-                productNumberInput > products.length
-              }
-            >
-              Select Product
-            </button>
-          </div>
-          <div className="mb-2 d-flex align-items-center justify-content-center">
-            <button
-              className="btn btn-secondary me-2"
-              onClick={onCancel}
-              style={{ marginRight: 8 }}
-            >
-              Cancel
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={handleConfirmPurchase}
-              disabled={!selectedProductId}
-            >
-              Confirm Purchase
-            </button>
-          </div>
-          {message && (
-            <div className="alert alert-info" style={{ margin: 8 }}>
-              {message}
-            </div>
-          )}
-          {change && (
-            <div className="alert alert-success" style={{ margin: 8 }}>
-              <strong>Change:</strong>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {Object.entries(change).map(([coin, count]) => (
-                  <li key={coin}>
-                    {coin} MAD x {count}
-                  </li>
+          {/* Cart summary */}
+          <div
+            className="vending-cart-summary"
+            style={{
+              flex: 1,
+              color: '#fff',
+              background: '#222',
+              borderRadius: 6,
+              padding: 8,
+              maxHeight: '300px',
+              overflowY: 'auto',
+              boxSizing: 'border-box',
+              minWidth: 0,
+            }}
+          >
+            <strong>Panier :</strong>
+            <br />
+            {cart.length === 0 ? (
+              <span className='fs-6 opacity-75'> Panier vide</span>
+            ) : (
+              <span className='fs-6 opacity-75'> 
+                {cartSummary.map((item, idx) => (
+                  <span key={item.id}>
+                    {item.name}(x{item.quantity}){idx < cartSummary.length - 1 ? ', ' : ''}
+                  </span>
                 ))}
-              </ul>
+              </span>
+            )}
+          </div>
+
+          {/* Keypad */}
+          <div
+            className="vending-keypad"
+            style={{
+              width: 220,
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              background: "#222",
+              borderRadius: 8,
+              padding: 10,
+              minWidth: 180,
+              opacity: canSelectProduct ? 1 : 0.5,
+              pointerEvents: canSelectProduct ? 'auto' : 'none'
+            }}
+          >
+            <div
+              className="vending-keypad-input bg-dark mb-2 fs-6"
+              style={{
+                color: "#fff",
+                textAlign: "center",
+                borderRadius: 6,
+                padding: "6px 0",
+                marginBottom: 10,
+                letterSpacing: 2,
+                minHeight: 32,
+                width: "100%",
+              }}
+            >
+              {productNumberInput || <span style={{ opacity: 0.5 }}>Numéro du produit</span>}
             </div>
-          )}
-          <div style={{ fontSize: 12, color: '#aaa', marginTop: 8 }}>
-            Enter the product number and click "Select Product".
+            {keypad.map((num) => (
+              <div
+                key={num}
+                className="vending-key"
+                style={{
+                  width: 50,
+                  height: 50,
+                  margin: 4,
+                  background: "#444",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 6,
+                  fontSize: "1.3rem",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+                onClick={() => handleKeypadPress(num)}
+              >
+                {num}
+              </div>
+            ))}
+            <div
+              className="vending-key"
+              style={{
+                width: 50,
+                height: 50,
+                margin: 4,
+                background: "#666",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 6,
+                fontSize: "1.3rem",
+                cursor: "pointer",
+                userSelect: "none",
+              }}
+              onClick={handleKeypadClear}
+            >
+              C
+            </div>
+            <div
+              className="btn btn-success"
+              style={{
+                width: 110,
+                height: 50,
+                margin: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 6,
+                fontSize: "1.1rem",
+                cursor: "pointer",
+                userSelect: "none",
+              }}
+              onClick={handleKeypadOk}
+            >
+              Ajouter
+            </div>
           </div>
         </div>
-      </a-scene>
+        
+        <div className="d-flex gap-1 mt-3 fw-bold">
+          <button className="btn-primary btn col-4 text-white" onClick={onCancel}>Annuler</button>
+          <button
+            className="btn btn-primary col-4 text-white"
+            onClick={handleConfirmPurchase}
+            disabled={cart.length === 0}
+          >
+            Confirmer
+          </button>
+          <button
+            className="btn btn-primary col-4 text-white"
+            onClick={handleReset}
+            type="button"
+          >
+            Reset
+          </button>
+        </div>
+
+        {change && typeof change === 'object' && (
+          <div className='d-flex align-items-center flex-wrap mt-3'>
+            <span style={{ marginRight: 8 }}>Change:&nbsp;</span>
+            {Object.entries(change).map(([coin, qty]) => {
+              let coinImg;
+              if (coin === "10" || coin === "10.0") coinImg = TEN_DIRHAMS;
+              else if (coin === "5" || coin === "5.0") coinImg = FIVE_DIRHAMS;
+              else if (coin === "2" || coin === "2.0") coinImg = TWO_DIRHAMS;
+              else if (coin === "1" || coin === "1.0") coinImg = ONE_DIRHAM;
+              else if (coin === "0.5") coinImg = HALF_DIRHAM;
+              else coinImg = null;
+              return (
+                <span key={coin} style={{ display: 'inline-flex', alignItems: 'center', marginRight: 14 }}>
+                  {qty} x
+                  {coinImg && (
+                    <img
+                      src={coinImg}
+                      alt={`${coin} MAD`}
+                      style={{ width: 32, height: 32, margin: '0 4px', verticalAlign: 'middle' }}
+                    />
+                  )}
+                  {!coinImg && <span style={{ margin: '0 4px' }}>{coin} MAD</span>}
+                </span>
+              );
+            })}
+          </div>
+        )}
+        {change && typeof change !== 'object' && (
+          <div style={{ color: 'white', marginTop: 10 }}>
+            Change: {change} MAD
+          </div>
+        )}
+      </div>
     </div>
   );
 }
