@@ -32,8 +32,8 @@ function App() {
   // Insert coin handler
   const handleInsertCoin = (amountFromButton) => {
     const amount = amountFromButton !== undefined
-      ? amountFromButton
-      : parseFloat(coinInput);
+      ? Number(amountFromButton)
+      : Number(coinInput);
     if (isNaN(amount) || amount <= 0) {
       setMessage('Please enter a valid amount.');
       return;
@@ -73,26 +73,22 @@ function App() {
   };
 
   // Confirm purchase handler
-  const handleConfirmPurchase = (cart) => {
-    if (!cart || cart.length === 0) {
-      setMessage('Panier vide.');
-      return;
-    }
+  const handleConfirmPurchase = () => {
     fetch(`${API_URL}/confirm-purchase`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart })
+      headers: { 'Content-Type': 'application/json' }
     })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           setMessage('Purchase successful!');
+          console.log('Data returned:', data);
           setChange(data.change);
           setSelectedProductId(null);
+          if (typeof data.balance !== 'undefined') setBalance(data.balance); // <-- set balance from API
         } else {
           setMessage(data.error || 'Purchase failed.');
         }
-        fetchBalance();
       })
       .catch(() => setMessage('Error confirming purchase.'));
   };
@@ -104,7 +100,7 @@ function App() {
       .then(data => {
         setMessage('Transaction cancelled. Refunded.');
         setSelectedProductId(null);
-        setChange(null);
+        setChange(data.change); // <-- Show refunded coins
         fetchBalance();
       })
       .catch(() => setMessage('Error cancelling transaction.'));

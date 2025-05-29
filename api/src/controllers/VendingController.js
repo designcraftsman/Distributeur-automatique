@@ -5,6 +5,7 @@ const vm = new VendingMachine();
 exports.insertCoin = (req, res) => {
   try {
     const { amount } = req.body;
+    console.log(`Inserting coin: ${amount}`);
     vm.insertMoney(amount);
     res.json({ 
       success: true,
@@ -24,10 +25,19 @@ exports.getBalance = (req, res) => {
 
 exports.cancelTransaction = (req, res) => {
   try {
+    // Calculate the change before cancelling
+    const refund = vm.paymentProcessor.getBalance();
+    let change = {};
+    if (refund > 0) {
+      change = vm.paymentProcessor.calculateChange(0);
+    }
     vm.cancelTransaction();
+    console.log('Transaction canceled');
     res.json({ 
       success: true,
-      message: 'Transaction canceled' 
+      message: 'Transaction canceled',
+      change, 
+      cart: [] 
     });
   } catch (error) {
     res.status(400).json({ 
@@ -63,6 +73,7 @@ exports.getAvailableProducts = (req, res) => {
 exports.selectProduct = (req, res) => {
   try {
     const { productId } = req.body;
+    console.log(`Selecting product: ${productId}`);
     vm.selectProduct(productId);
     res.json({ 
       success: true,
@@ -80,10 +91,12 @@ exports.selectProduct = (req, res) => {
 exports.confirmPurchase = (req, res) => {
   try {
     const change = vm.confirmTransaction();
+    console.log('Products dispensed, change:', change);
     res.json({ 
       success: true,
       message: 'Products dispensed successfully',
-      change // Return the optimized coins
+      change,
+      balance: vm.paymentProcessor.getBalance()
     });
   } catch (error) {
     res.status(400).json({ 

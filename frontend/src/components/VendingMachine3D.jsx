@@ -28,13 +28,14 @@ export default function VendingMachine3D({
   const [productNumberInput, setProductNumberInput] = useState('');
   // Cart state: array of product objects
   const [cart, setCart] = useState([]);
-
+const [insertedCoins, setInsertedCoins] = useState([]);
   // Products to display at the bottom after purchase
   const [deliveredProducts, setDeliveredProducts] = useState([]);
 
   // Show selected product in panel
   const selectedProduct = products.find(p => p.id === selectedProductId);
 
+  console.log("Change received:", change);
   // Handler for selecting product by number
   const handleSelectProductByNumber = () => {
     const idx = parseInt(productNumberInput, 10) - 1;
@@ -88,8 +89,9 @@ export default function VendingMachine3D({
       return;
     }
     setCart(prev => [...prev, product]);
+    onSelectProduct(product.id); // <-- Notify backend of selection
     setProductNumberInput('');
-  }
+    }
 };
 
   // Handler for keypad "C" (clear) button
@@ -102,23 +104,22 @@ export default function VendingMachine3D({
 
   // Clear cart when change is returned (purchase confirmed)
   useEffect(() => {
+    // If change is set and cart is not empty, clear cart (for both purchase and cancel)
     if (change && cart.length > 0) {
       setDeliveredProducts(cart);
       setCart([]);
+    }
+    // If change is set and deliveredProducts is not empty (cancel), clear deliveredProducts
+    if (change && deliveredProducts.length > 0) {
+      setDeliveredProducts([]);
     }
   }, [change]); // Only runs when change is set (purchase confirmed)
 
   // Handler for confirm purchase, sends cart to parent
   const handleConfirmPurchase = () => {
   if (cart.length === 0) return;
-  const cartToSend = cart.reduce((acc, item) => {
-    const found = acc.find(i => i.id === item.id);
-    if (found) found.quantity += 1;
-    else acc.push({ id: item.id, quantity: 1 });
-    return acc;
-  }, []);
   if (typeof onConfirmPurchase === 'function') {
-    onConfirmPurchase(cartToSend, balance); // <-- send original balance
+    onConfirmPurchase(); // <-- no arguments
   }
 };
 
@@ -194,7 +195,7 @@ export default function VendingMachine3D({
           position="1.33 1.65 -5.95" // slightly in front of the box
         />
         <a-text
-          value={(balance - total).toFixed(2) + " MAD"}
+          value={balance.toFixed(2) + " MAD"} // <-- just balance, not balance - total
           color="#fff"
           width="2"
           align="center"
@@ -262,6 +263,7 @@ export default function VendingMachine3D({
                   click: () => {
                     if (canSelectProduct && balance >= product.price) {
                       onSelectProduct(product.id);
+                      setCart(prev => [...prev, product]);
                     }
                   }
                 }}
@@ -350,44 +352,55 @@ export default function VendingMachine3D({
           zIndex: 10
         }}
       >
-        <div className="vending-display bg-dark text-white p-3 rounded">
-          Inseré: {(balance - total).toFixed(2)} MAD
-        </div>
-        <div className='d-flex my-3 gap-2 coin-row' style={{ position: 'relative', height: 60 }}>
-          {[TEN_DIRHAMS, FIVE_DIRHAMS, TWO_DIRHAMS, ONE_DIRHAM, HALF_DIRHAM].map((img, idx) => (
-            <div className='col-2' key={idx} style={{ position: 'relative' }}>
-              <img
-                src={img}
-                className='w-100'
-                alt={`${[10, 5, 2, 1, 0.5][idx]} Dirhams`}
-                style={{
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s',
-                  zIndex: animatingCoin === idx ? 100 : 1,
-                  position: animatingCoin === idx ? 'absolute' : 'static',
-                  left: animatingCoin === idx ? 0 : undefined,
-                  top: animatingCoin === idx ? 0 : undefined,
-                  // Animate to the top of the balance text
-                  transform: animatingCoin === idx
-                    ? 'translate(-180px, 150px) scale(0.7)' // adjust as needed
-                    : undefined,
-                  transition: animatingCoin === idx
-                    ? 'transform 0.7s cubic-bezier(.4,2,.6,1)'
-                    : 'transform 0.2s'
-                }}
-                onClick={() => {
-                  setAnimatingCoin(idx);
-                  setTimeout(() => {
-                    setAnimatingCoin(null);
-                    onInsertCoin([10, 5, 2, 1, 0.5][idx]);
-                  }, 700); // match animation duration
-                }}
-                onMouseEnter={e => e.currentTarget.style.transform = animatingCoin === idx ? e.currentTarget.style.transform : 'scale(1.2)'}
-                onMouseLeave={e => e.currentTarget.style.transform = animatingCoin === idx ? e.currentTarget.style.transform : 'scale(1)'}
-              />
+        <div className='coin-panel' style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+  {[
+    { img: TEN_DIRHAMS, value: 10 },
+    { img: FIVE_DIRHAMS, value: 5 },
+    { img: TWO_DIRHAMS, value: 2 },
+    { img: ONE_DIRHAM, value: 1 },
+    { img: HALF_DIRHAM, value: 0.5 }
+  ].map((coinType, coinIdx) => (
+    <div key={coinType.value} className='d-flex  justify-content-evenly ' style={{ marginBottom: 4 }}>
+      {Array.from({ length: 5 }).map((_, coinCopyIdx) => {
+        const uniqueKey = `${coinIdx}-${coinCopyIdx}`;
+        if (insertedCoins.includes(uniqueKey) && animatingCoin !== uniqueKey) return null;
+        return (
+          <div className='coin' key={uniqueKey} style={{ position: 'relative', display: 'inline-block' }}>
+            <img
+              src={coinType.img}
+              className='w-100'
+              alt={`${coinType.value} Dirhams`}
+              style={{
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                zIndex: animatingCoin === uniqueKey ? 100 : 1,
+                position: animatingCoin === uniqueKey ? 'absolute' : 'static',
+                left: animatingCoin === uniqueKey ? 0 : undefined,
+                top: animatingCoin === uniqueKey ? 0 : undefined,
+                transform: animatingCoin === uniqueKey
+                  ? 'translate(-180px, 150px) scale(0.7)'
+                  : 'scale(1)',
+                transition: animatingCoin === uniqueKey
+                  ? 'transform 0.7s cubic-bezier(.4,2,.6,1)'
+                  : 'transform 0.2s'
+              }}
+              onClick={() => {
+                setAnimatingCoin(uniqueKey);
+                setTimeout(() => {
+                  setAnimatingCoin(null);
+                  setInsertedCoins(prev => [...prev, uniqueKey]);
+                  onInsertCoin(coinType.value);
+                }, 700);
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = animatingCoin === uniqueKey ? e.currentTarget.style.transform : 'scale(1.2)'}
+              onMouseLeave={e => e.currentTarget.style.transform = animatingCoin === uniqueKey ? e.currentTarget.style.transform : 'scale(1)'}
+            />
             </div>
-          ))}
+            );
+          })}
         </div>
+        ))}
+      </div>
 
         {/* Cart and Keypad side by side */}
         <div
@@ -402,41 +415,13 @@ export default function VendingMachine3D({
             maxWidth: '100%',
           }}
         >
-          {/* Cart summary */}
-          <div
-            className="vending-cart-summary"
-            style={{
-              flex: 1,
-              color: '#fff',
-              background: '#222',
-              borderRadius: 6,
-              padding: 8,
-              maxHeight: '300px',
-              overflowY: 'auto',
-              boxSizing: 'border-box',
-              minWidth: 0,
-            }}
-          >
-            <strong>Panier :</strong>
-            <br />
-            {cart.length === 0 ? (
-              <span className='fs-6 opacity-75'> Panier vide</span>
-            ) : (
-              <span className='fs-6 opacity-75'> 
-                {cartSummary.map((item, idx) => (
-                  <span key={item.id}>
-                    {item.name}(x{item.quantity}){idx < cartSummary.length - 1 ? ', ' : ''}
-                  </span>
-                ))}
-              </span>
-            )}
-          </div>
+          
 
           {/* Keypad */}
           <div
             className="vending-keypad"
             style={{
-              width: 220,
+              flex: 1,
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "center",
