@@ -90,12 +90,14 @@ exports.selectProduct = (req, res) => {
 
 exports.confirmPurchase = (req, res) => {
   try {
+    const dispensedProducts = vm.cart.products; // Get the products to dispense
     const change = vm.confirmTransaction();
-    console.log('Products dispensed, change:', change);
+    console.log('Products dispensed, change:', change, 'products:', dispensedProducts);
     res.json({ 
       success: true,
       message: 'Products dispensed successfully',
       change,
+      dispensedProducts, // Include dispensed products in the response
       balance: vm.paymentProcessor.getBalance()
     });
   } catch (error) {

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine Simulation - Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block d-sm-none sidebar collapse" id="sidebar">
+                <div class="position-fixed">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="#introduction">Introduction</a></li>
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item"><a class="nav-link" href="#project-overview">Project Overview</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#purpose">Purpose</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#technologies-used">Technologies Used</a></li>
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item"><a class="nav-link" href="#backend-technologies">Backend Technologies</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#testing-tools">Testing Tools</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#frontend-technologies">Frontend Technologies</a></li>
+                            </ul>
+                        </ul>
+                        <li class="nav-item"><a class="nav-link" href="#uml-diagrams">UML Diagrams</a></li>
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item"><a class="nav-link" href="#use-case-diagram">Use Case Diagram</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#sequence-diagram">Sequence Diagram</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#class-diagram">Class Diagram</a></li>
+                        </ul>
+                        <li class="nav-item"><a class="nav-link" href="#api-documentation">API</a></li>
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item"><a class="nav-link" href="#folders">Folders</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#files">Files</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#routes-testing">Routes Testing</a></li>
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item"><a class="nav-link" href="#list-of-products">List of Products</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#insert-coin">Insert Coin</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#select-product">Select Product</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#confirm-transaction">Confirm Transaction</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#cancel">Cancel</a></li>
+                            </ul>
+                        </ul>
+                        <li class="nav-item"><a class="nav-link" href="#frontend-documentation">Frontend Documentation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#deployment">Deployment</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 m-auto col-lg-7 main-content">
+                <!-- Introduction -->
+                <section id="introduction" class="section">
+                    <h1 class="display-6 fw-bold my-5">Distributeur Automatique - Documentation</h1>
+                    <hr class="my-5">
+
+                    <!-- Project Overview -->
+                    <section id="project-overview">
+                        <h2 class="fw-bold fs-4 my-3">Project Overview</h2>
+                        <p>
+                            The vending machine simulation is a web-based application designed to replicate the functionality of a physical vending machine. 
+                            It allows users to interact with a 3D interface to select products, insert coins, and receive change. The backend API handles all transaction logic, ensuring smooth operations.
+                        </p>
+                        <p>
+                            This project is ideal for demonstrating concepts such as object-oriented programming, API design, and frontend-backend integration.
+                        </p>
+                    </section>
+                    <hr/>
+
+                    <!-- Purpose -->
+                    <section id="purpose">
+                        <h2 class="fw-bold fs-4 my-3">Purpose</h2>
+                        <p>
+                            The primary purpose of this project is to simulate a vending machine experience in a digital environment. It aims to:
+                        </p>
+                        <ul>
+                            <li>Provide an interactive and realistic simulation of a vending machine.</li>
+                            <li>Demonstrate the integration of frontend and backend systems.</li>
+                            <li>Showcase the use of 3D models in web applications.</li>
+                            <li>Implement transaction handling, including payment processing and change calculation.</li>
+                        </ul>
+                    </section>
+                    <hr/>
+
+                    <!-- Technologies Used -->
+                    <section id="technologies-used">
+                        <h2 class="fw-bold fs-4 my-3">Technologies Used</h2>
+
+                        <!-- Backend Technologies -->
+                        <section id="backend-technologies">
+                            <h3 class="fw-bold fs-4 my-3">Backend Technologies</h3>
+                            <p>
+                                The backend of the vending machine simulation is built using the following technologies:
+                            </p>
+                            <ul>
+                                <li><strong>Node.js:</strong> A JavaScript runtime environment used to build the backend server. It provides an efficient and scalable platform for handling API requests and managing application logic.</li>
+                                <li><strong>Express:</strong> A lightweight web application framework for Node.js, used to define API routes, handle HTTP requests, and manage middleware for the application.</li>
+                            </ul>
+                            <p>
+                                These technologies ensure a fast and reliable backend capable of handling vending machine operations like product selection, payment processing, and transaction management.
+                            </p>
+                        </section>
+                        <hr/>
+
+                        <!-- Testing Tools -->
+                        <section id="testing-tools">
+                            <h3 class="fw-bold fs-4 my-3">Testing Tools</h3>
+                            <p>
+                                To test the API routes and ensure proper functionality, the following tool is used:
+                            </p>
+                            <ul>
+                                <li><strong>Postman:</strong> A popular API testing tool used to send requests to the backend routes and verify their responses. It allows developers to test endpoints like inserting coins, selecting products, and confirming transactions efficiently.</li>
+                            </ul>
+                            <p>
+                                Postman simplifies the process of debugging and validating the backend logic during development.
+                            </p>
+                        </section>
+                        <hr/>
+
+                        <!-- Frontend Technologies -->
+                        <section id="frontend-technologies">
+                            <h3 class="fw-bold fs-4 my-3">Frontend Technologies</h3>
+                            <p>
+                                The frontend of the vending machine simulation is built using modern web technologies to create an interactive and visually appealing user interface:
+                            </p>
+                            <ul>
+                                <li><strong>React.js:</strong> A JavaScript library for building user interfaces. It is used to create the dynamic components of the vending machine, such as the 3D interface and product selection panel.</li>
+                                <li><strong>A-Frame:</strong> A web framework for building 3D and VR experiences. It is used to render the vending machine and products in a realistic 3D environment.</li>
+                                <li><strong>Bootstrap:</strong> A CSS framework for styling the application and ensuring responsiveness across devices. It provides pre-designed components for a clean and professional look.</li>
+                                <li><strong>SASS:</strong> A CSS preprocessor used to write modular and maintainable styles for the application. It simplifies the process of managing complex stylesheets.</li>
+                            </ul>
+                            <p>
+                                These frontend technologies work together to deliver a seamless and engaging user experience for interacting with the vending machine simulation.
+                            </p>
+                        </section>
+                    </section>
+                </section>
+                <hr/>
+
+                <!-- UML Diagrams -->
+                <!-- UML Diagrams -->
+                <section id="uml-diagrams" class="section">
+                    <h2 class="fw-bold fs-2 my-3">UML Diagrams</h2>
+
+                    <!-- Use Case Diagram -->
+                    <section id="use-case-diagram">
+                        <h3 class="fw-bold fs-3 my-3">Use Case Diagram</h3>
+                        <p>
+                            This diagram illustrates the interactions between the user and the vending machine system. 
+                            The user can perform actions like inserting money, browsing the product catalog, adding products to the cart, confirming or canceling a transaction. 
+                            The system performs internal operations such as updating the balance, verifying the balance, dispensing the product, returning the change, and resetting its state.
+                            <img src="assets/images/use-case.png" alt="Use Case Diagram" class="img-fluid my-3">
+                        </p>
+                    </section>
+                    <hr/>
+
+                    <!-- Sequence Diagram -->
+                    <section id="sequence-diagram">
+                        <h3 class="fw-bold fs-3 my-3">Sequence Diagram</h3>
+                        <p>
+                            This diagram details the step-by-step flow of purchasing a product from the vending machine:
+                            <ol>
+                                <li>The user starts by requesting to view the product catalog.</li>
+                                <li>The user inserts coins; the system updates and displays the current balance.</li>
+                                <li>The user selects products, and the system adds them to the cart.</li>
+                                <li>Once the balance is sufficient, the user confirms the transaction.</li>
+                                <li>The system calculates change, resets internal state, dispenses the change, and finally dispenses the selected products.</li>
+                            </ol>
+                            This diagram emphasizes the loops for inserting money and selecting multiple products.
+                            <img src="assets/images/sequence.png" alt="Sequence Diagram" class="img-fluid my-3">
+                        </p>
+                    </section>
+                    <hr/>
+
+                    <!-- Class Diagram -->
+                    <section id="class-diagram">
+                        <h3 class="fw-bold fs-3 my-3">Class Diagram</h3>
+                        <p>
+                            This diagram shows the object-oriented structure of the vending machine system, including the relationships between key classes:
+                            <ul>
+                                <li><strong>VendingMachine:</strong> The main class managing balance, cart, inventory, payments, and product dispensing.</li>
+                                <li><strong>Cart:</strong> Holds selected products; allows adding and clearing products and calculating total amount.</li>
+                                <li><strong>ProductInventory:</strong> Maintains available products and checks product availability.</li>
+                                <li><strong>PaymentProcessor:</strong> Handles balance, money insertion, change calculation, and balance reset.</li>
+                                <li><strong>Dispenser:</strong> Responsible for dispensing products and change.</li>
+                                <li><strong>Product:</strong> Represents individual items with ID, name, and price.</li>
+                                <li><strong>AcceptedCoins (Enumeration):</strong> Lists allowed coin denominations (e.g., 0.5MAD, 1MAD, etc.).</li>
+                            </ul>
+                            The diagram clearly reflects how components collaborate in the system.
+                            <img src="assets/images/class.png" alt="Class Diagram" class="img-fluid my-3">
+                        </p>
+                    </section>
+                </section>
+
+                <hr/>
+
+                <!-- API Documentation -->
+                <section id="api-documentation" class="section">
+                    <h2 class="fw-bold fs-1 my-3">API</h2>
+                    <p><strong>Overview:</strong> The API is responsible for handling backend operations such as managing products, processing transactions, and maintaining user balances.</p>
+                    <p><strong>File tree:</strong></p>
+                    <p>
+                        <img src="assets/images/api-structure.png" class="img-fluid my-3" alt="API File Structure">
+                    </p>
+                    <p>
+                        <img src="assets/images/src-folder.png" class="img-fluid my-3" alt="API File Structure">
+                    </p>
+                    <hr/>
+
+                    <!-- Folders -->
+                    <section id="folders">
+                    <h3 class="fw-bold fs-4 my-3">Folders</h3>
+                    <ul>
+                        <li><strong>src:</strong> Contains the main source code for the API, including all the subfolders and files required for backend functionality.</li>
+                        <li><strong>routes:</strong> Defines the API endpoints and their logic. Each route corresponds to a specific functionality, such as inserting coins, selecting products, confirming purchases, and canceling transactions.</li>
+                        <li><strong>models:</strong> Contains the models used in the application.</li>
+                        <li><strong>services:</strong> Implements the core business logic for the vending machine operations. This includes managing the cart, inventory, payment processing, and dispensing products and change.</li>
+                        <li><strong>utils:</strong> Contains utility files that provide helper functions or constants used across the application. </li>
+                        <li><strong>assets:</strong> Stores static files such as 3D models (`.glb`) used for rendering products in the vending machine interface. Example: `objects/candy_bar.glb`, `objects/chips.glb`.</li>
+                    </ul>
+                    </section>
+                                        <hr/>
+
+                                        <!-- Files -->
+                                        <section id="files">
+                    <h3 class="fw-bold fs-4 my-3">Files</h3>
+                    <ul>
+                        <li><strong>server.js:</strong> The entry point of the API. Sets up the Express server, connects to the database, and initializes middleware and routes.</li>
+                        <li><strong>routes/VendingRoutes.js:</strong> Defines routes for vending machine operations, such as inserting coins, selecting products, confirming purchases, and canceling transactions.</li>
+                        <li><strong>models/Product.js:</strong> Defines the schema for products, including fields like `id`, `name`, `price`, `glb` (3D model file), `position`, and `scale` for rendering in the vending machine interface.</li>
+                        <li><strong>controllers/VendingController.js:</strong> Implements the logic for vending machine operations. Handles requests and responses for routes like inserting coins, selecting products, and confirming transactions.</li>
+                        <li><strong>services/VendingMachineService.js:</strong> Manages the core vending machine functionality, including payment processing, product selection, and dispensing products and change.</li>
+                        <li><strong>services/PaymentService.js:</strong> Handles payment-related operations, such as inserting money, calculating change, and managing the balance.</li>
+                        <li><strong>services/InventoryService.js:</strong> Manages the inventory of products in the vending machine. Provides methods to check product availability and retrieve product details.</li>
+                        <li><strong>services/DispenserService.js:</strong> Handles the dispensing of products and change. Simulates the physical dispensing process in the vending machine.</li>
+                        <li><strong>services/CartService.js:</strong> Manages the user's cart during a transaction. Tracks selected products and calculates the total amount.</li>
+                    </ul>
+                    </section>
+                    <hr/>
+
+                    <!-- Routes Testing -->
+                    <section id="routes-testing">
+                <h3 class="fw-bold fs-4 my-3">Routes Testing</h3>
+                <section id="list-of-products">
+                    <p>
+                        <strong>List of Products:</strong> This route retrieves all available products in the vending machine. It ensures the frontend displays accurate product information, including names, prices.
+                        <img src="assets/images/getProducts-Route.png" alt="System Architecture Diagram" class="img-fluid my-3">
+                        <ul>
+                            <li>Method: GET</li>
+                            <li>Endpoint: <code>/api/products</code></li>
+                            <li>Expected Response: JSON array of products with fields like <code>id</code>, <code>name</code>, <code>price</code>.</li>
+                        </ul>
+                    </p>
+                </section>
+                <hr/>
+                <section id="insert-coin">
+                    <p>
+                        <strong>Insert Coin:</strong> This route handles coin insertion by the user. It updates the backend with the amount inserted and ensures the frontend reflects the updated balance.
+                        <img src="assets/images/insertCoin-Route.png" alt="System Architecture Diagram" class="img-fluid my-3">
+                        <ul>
+                            <li>Method: POST</li>
+                            <li>Endpoint: <code>/api/insert-coin</code></li>
+                            <li>Request Body: <code>{ "amount": 5 }</code></li>
+                            <li>Expected Response: Updated balance in JSON format, e.g., <code>{ "balance": 5 }</code>.</li>
+                        </ul>
+                    </p>
+                </section>
+                <hr/>
+                <section id="select-product">
+                    <p>
+                        <strong>Select a Product:</strong> This route allows the user to select a product. It verifies if the user has sufficient balance and updates the backend accordingly.
+                        <img src="assets/images/selectProduct-Route.png" alt="System Architecture Diagram" class="img-fluid my-3">
+                        <ul>
+                            <li>Method: POST</li>
+                            <li>Endpoint: <code>/api/select-product</code></li>
+                            <li>Request Body: <code>{ "productId": "123" }</code></li>
+                            <li>Expected Response: Confirmation of product selection or an error message if the balance is insufficient.</li>
+                        </ul>
+                    </p>
+                </section>
+                <hr/>
+                <section id="confirm-transaction">
+                    <p>
+                        <strong>Confirm Transaction:</strong> This route finalizes the purchase. It deducts the product price from the balance, updates the stock, and calculates the change to be dispensed.
+                        <img src="assets/images/confirmPurchase-Route.png" alt="System Architecture Diagram" class="img-fluid my-3">
+                        <ul>
+                            <li>Method: POST</li>
+                            <li>Endpoint: <code>/api/confirm-transaction</code></li>
+                            <li>Expected Response: JSON object with fields like <code>dispensedProducts</code> ,<code>change</code> and <code>balance</code>.</li>
+                        </ul>
+                    </p>
+                </section>
+                <hr/>
+                <section id="cancel">
+                    <p>
+                        <strong>Cancel:</strong> This route cancels the transaction and refunds the inserted coins. It ensures the backend resets the balance and the frontend reflects the cancellation.
+                        <img src="assets/images/cancel-Route.png" alt="System Architecture Diagram" class="img-fluid my-3">
+                        <ul>
+                            <li>Method: POST</li>
+                            <li>Endpoint: <code>/api/cancel</code></li>
+                            <li>This route empties the cart , returns a JSON object with the refunded amount, e.g., <code>{ "refund": 1.25 }</code>.</li>
+                        </ul>
+                    </p>
+                </section>
+                </section>
+                <hr/>
+
+                <!-- Frontend Documentation -->
+                <section id="frontend-documentation" class="section">
+                <h2 class="fw-bold fs-1 my-3">Frontend Documentation</h2>
+                <p><strong>Overview:</strong> The frontend is responsible for creating an interactive user interface for the vending machine simulation. It uses modern web technologies to render a 3D vending machine, handle user interactions, and communicate with the backend API.</p>
+                <p><strong>File tree:</strong></p>
+                <p>
+                    <img src="assets/images/frontend-file-tree.png" class="img-fluid my-3" alt="Frontend File Structure">
+                </p>
+                <p>
+                    <img src="assets/images/frontend-src.png" class="img-fluid my-3" alt="Frontend Source Folder">
+                </p>
+                <p>
+                    <img src="assets/images/frotend-components-folder.png" class="img-fluid my-3" alt="Frontend Components Folder">
+                </p>
+                <hr/>
+
+                <!-- Folders -->
+                <section id="folders">
+                    <h3 class="fw-bold fs-4 my-3">Folders</h3>
+                    <ul>
+                        <li><strong>src:</strong> Contains the main source code for the frontend application, including components, assets, and styles.</li>
+                        <li><strong>components:</strong> Includes reusable React components such as `VendingMachine3D.jsx`, `Menu.jsx`, `CoinPanel.jsx`, and `Keypad.jsx` that form the vending machine interface.</li>
+                        <li><strong>assets:</strong> Stores static files such as images, icons, and 3D models (`.glb`) used in the vending machine simulation.</li>
+                        <li><strong>styles:</strong> Contains CSS and SASS files for styling the application and ensuring responsiveness.</li>
+                    </ul>
+                </section>
+                <hr/>
+
+                <!-- Files -->
+                <section id="files">
+                    <h3 class="fw-bold fs-4 my-3">Files</h3>
+                    <ul>
+                        <li><strong>index.js:</strong> The entry point of the React application. It renders the root component and initializes the frontend.</li>
+                        <li><strong>App.jsx:</strong> The main application component that sets up routing and renders the vending machine interface.</li>
+                        <li><strong>components/VendingMachine3D.jsx:</strong> Implements the 3D vending machine interface using A-Frame and React. Handles product selection, coin insertion, and cart management.</li>
+                        <li><strong>components/Menu.jsx:</strong> Displays the menu panel for user interactions, including coin insertion, keypad input, and cart actions.</li>
+                        <li><strong>components/CoinPanel.jsx:</strong> Handles coin insertion and animates coins being added to the vending machine.</li>
+                        <li><strong>components/Keypad.jsx:</strong> Provides a numeric keypad for selecting products by their ID.</li>
+                        <li><strong>assets/objects:</strong> Contains 3D models (`.glb`) for rendering products in the vending machine interface.</li>
+                        <li><strong>assets/coins:</strong> Stores images of coins used for the coin panel and change display.</li>
+                        <li><strong>styles/style.css:</strong> Defines global styles for the application, ensuring a consistent look and feel.</li>
+                    </ul>
+                </section>
+                <hr/>
+
+                <!-- Use of A-Frame -->
+                <section id="aframe-walkthrough">
+                    <h3 class="fw-bold fs-4 my-3">Use of A-Frame</h3>
+                    <p><strong>Overview:</strong> A-Frame is a web framework for building 3D and VR experiences. It is used to render the vending machine and products in a realistic 3D environment.</p>
+                    <ul>
+                        <li><strong>Scene Setup:</strong> Defines the 3D environment with sky and ground elements.</li>
+                        <li><strong>Vending Machine Model:</strong> Renders the vending machine using `.glb` files.</li>
+                        <li><strong>Product Display:</strong> Displays products as clickable 3D objects.</li>
+                        <li><strong>Interaction:</strong> Allows users to interact with products via events like `click`.</li>
+                    </ul>
+                </section>
+                <hr/>
+
+                <section id="frontend-functions" class="section">
+                <h3 class="fw-bold fs-4 my-3">Frontend Functions</h3>
+                <p><strong>Overview:</strong> The frontend uses several functions to interact with the backend API and manage the vending machine's state. These functions handle coin insertion, product selection, transaction confirmation, and cancellation.</p>
+                <ul>
+                    <li><strong>fetchBalance:</strong>
+                        <p>Fetches the current balance from the backend and updates the frontend state.</p>
+                        <pre><code>
+            fetch(`${API_URL}/balance`)
+                .then(res => res.json())
+                .then(data => setBalance(data.balance || 0));
+                        </code></pre>
+                    </li>
+                    <li><strong>handleInsertCoin:</strong>
+                        <p>Handles coin insertion by sending the amount to the backend and updating the balance.</p>
+                        <pre><code>
+            fetch(`${API_URL}/insert-coin`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    setMessage('Coin inserted.');
+                    fetchBalance();
+                });
+                        </code></pre>
+                    </li>
+                    <li><strong>handleSelectProduct:</strong>
+                        <p>Selects a product by sending its ID to the backend and updates the cart if successful.</p>
+                        <pre><code>
+            fetch(`${API_URL}/select-product`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        setCart(prev => [...prev, selectedProduct]);
+                    } else {
+                        setMessage(data.error || 'Error selecting product.');
+                    }
+                });
+                        </code></pre>
+                    </li>
+                    <li><strong>handleConfirmPurchase:</strong>
+                        <p>Finalizes the purchase by sending a request to the backend. Updates the balance and displays the change.</p>
+                        <pre><code>
+            fetch(`${API_URL}/confirm-purchase`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        setChange(data.change);
+                        setBalance(data.balance);
+                    } else {
+                        setMessage(data.error || 'Purchase failed.');
+                    }
+                });
+                        </code></pre>
+                    </li>
+                    <li><strong>handleCancel:</strong>
+                        <p>Cancels the transaction by sending a request to the backend. Resets the cart and refunds the balance.</p>
+                        <pre><code>
+            fetch(`${API_URL}/cancel`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    setMessage('Transaction cancelled.');
+                    setChange(data.change);
+                    fetchBalance();
+                });
+                        </code></pre>
+                    </li>
+                    <li><strong>handleReset:</strong>
+                        <p>Resets the frontend state, including the cart, balance, and inserted coins.</p>
+                        <pre><code>
+            setCart([]);
+            setBalance(0);
+            setInsertedCoins([]);
+            setProductNumberInput('');
+                        </code></pre>
+                    </li>
+                </ul>
+            </section>
+                <hr/>
+
+                <!-- Interface UI -->
+                <section id="interface-ui">
+                    <h3 class="fw-bold fs-4 my-3">Interface UI</h3>
+                    <p><strong>Overview:</strong> The UI is designed to be intuitive and responsive, allowing users to interact seamlessly with the vending machine.</p>
+                    <ul>
+                        <li><strong>Menu Panel:</strong> Displays balance, cart, and change. Includes buttons for confirming or canceling transactions.</li>
+                        <li><strong>Keypad:</strong> Allows users to input product numbers. Includes buttons for adding products and clearing input.</li>
+                        <li><strong>Coin Panel:</strong> Displays available coins for insertion. Animates coins being added to the vending machine.</li>
+                        <li><strong>3D Interface:</strong> Renders the vending machine and products. Allows users to interact with products directly.</li>
+                    </ul>
+                </section>
+            </section>
+                <hr/>
+
+
+                <!-- Deployment -->
+                <section id="deployment" class="section">
+                    <h2 class="fw-bold fs-1 my-3">Deployment</h2>
+                    <p><strong>Setup Instructions:</strong></p>
+                    <ul>
+                        <li><strong>Frontend:</strong> 
+                            <ol>
+                                <li>Ensure Node.js and npm are installed.</li>
+                                <li>Navigate to the `frontend` folder.</li>
+                                <li>Run `npm install` to install dependencies.</li>
+                                <li>Start the development server using `npm start`.</li>
+                                <li>Access the application at `http://localhost:3000`.</li>
+                            </ol>
+                        </li>
+                        <li><strong>Backend:</strong> 
+                            <ol>
+                                <li>Ensure Node.js and npm are installed.</li>
+                                <li>Navigate to the `api` folder.</li>
+                                <li>Run `npm install` to install dependencies.</li>
+                                <li>Start the server using `node server.js`.</li>
+                                <li>Verify the API is running at `http://localhost:4200`.</li>
+                            </ol>
+                        </li>
+                        <li><strong>Environment Variables:</strong> 
+                            <ul>
+                                <li><code>API_URL</code>: URL of the backend API (e.g., `http://localhost:4200`).</li>
+                                <li><code>PORT</code>: Port for the backend server (default: `4200`).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p><strong>Production Deployment:</strong></p>
+                    <ul>
+                        <li>Use a cloud provider like AWS, Azure, or Heroku.</li>
+                        <li>Set up CI/CD pipelines for automated deployment.</li>
+                        <li>Ensure environment variables are configured securely.</li>
+                        <li>Use a reverse proxy like Nginx for serving the frontend and backend.</li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
