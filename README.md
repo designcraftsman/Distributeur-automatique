@@ -25,7 +25,6 @@ The **Vending Machine Simulation** is a web-based application designed to replic
 ### Backend
 - **Node.js**: For building the API.
 - **Express.js**: For handling API routes.
-- **MongoDB**: For storing product data (optional, if database integration is added).
 
 ### Development & Deployment Tools
 - **Visual Studio Code**: For code editing and debugging.
@@ -46,7 +45,7 @@ You can set up the project using one of two methods: **Standard Installation** o
 #### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/distributeur-automatique.git
+   git clone https://github.com/designcraftsman/distributeur-automatique.git
    cd distributeur-automatique
    ```
 
@@ -76,7 +75,7 @@ You can set up the project using one of two methods: **Standard Installation** o
 #### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/distributeur-automatique.git
+   git clone https://github.com/designcraftsman/distributeur-automatique.git
    cd distributeur-automatique
    ```
 
@@ -104,3 +103,4 @@ For questions or support, contact:
 - **Name**: Fayz Oussama
 - **Email**: fzoussama25@gmail.com
 - **GitHub**: [designcraftsman](https://github.com/designcraftsman)
+- **Linkedin**: [Oussama Fayz](https://www.linkedin.com/in/oussama-fayz-9a3a22223/)
