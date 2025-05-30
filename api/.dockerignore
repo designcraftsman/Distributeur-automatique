@@ -1,0 +1,15 @@
+FROM node:alpine AS builder
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+
+COPY . .
+
+FROM node:alpine
+WORKDIR /app
+COPY --from=builder /app .
+RUN npm install -g nodemon
+
+EXPOSE 4200
+CMD ["nodemon", "server"]
