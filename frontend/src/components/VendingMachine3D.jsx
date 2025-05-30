@@ -26,7 +26,8 @@ export default function VendingMachine3D({
   onCancel,
   handleReset, // Add this prop to the destructuring
   message,
-  change
+  change,
+  transactionStatus,
 }) {
   // State for product number input
   const [productNumberInput, setProductNumberInput] = useState('');
@@ -116,16 +117,20 @@ export default function VendingMachine3D({
 
   // Clear cart when change is returned (purchase confirmed)
   useEffect(() => {
-    // If change is set and cart is not empty, clear cart (for both purchase and cancel)
     if (change && cart.length > 0) {
-      setDeliveredProducts(cart);
+      // Only deliver products on successful purchase
+      if (transactionStatus === 'success') {
+        setDeliveredProducts(cart);
+      }
+      // Clear cart in all cases
       setCart([]);
     }
-    // If change is set and deliveredProducts is not empty (cancel), clear deliveredProducts
-    if (change && deliveredProducts.length > 0) {
+    
+    // If change is set and deliveredProducts is not empty, clear deliveredProducts on cancel
+    if (transactionStatus === 'cancel' && deliveredProducts.length > 0) {
       setDeliveredProducts([]);
     }
-  }, [change]); // Only runs when change is set (purchase confirmed)
+  }, [change, transactionStatus, cart]); // Only runs when change is set (purchase confirmed)
 
   // Handler for confirm purchase, sends cart to parent
   const handleConfirmPurchase = () => {
@@ -168,15 +173,49 @@ export default function VendingMachine3D({
          vr-mode-ui="enabled: false"
         style={{ width: '100vw', height: '100vh' }}
       >
-        {/* Sky and ground for a more immersive environment */}
-        <a-sky color="#b3e0ff"></a-sky>
-        <a-plane
-          color="#e69138"
-          rotation="-90 0 0"
-          width="30"
-          height="30"
-          position="0 -5 -10"
-        ></a-plane>
+            <a-entity environment="preset: default; 
+                         skyType: atmosphere; 
+                         lightPosition: 0 5 0;
+                         fog: 0"
+                         width="1000"
+                         position="0 -7 -10"></a-entity>
+       
+       
+        <a-box 
+          position="0 0 -30" 
+          depth="0.1" 
+          height="20" 
+          width="40" 
+          color="#b3adac"
+        ></a-box>
+
+
+        <a-box 
+          position="-20 0 -10" 
+          depth="40" 
+          height="20" 
+          width="0.1" 
+          color="#b3adac"
+        ></a-box>
+
+
+        <a-box 
+          position="20 0 -10" 
+          depth="40" 
+          height="20" 
+          width="0.1" 
+          color="#b3adac"
+        ></a-box>
+
+
+        <a-box 
+          position="0 10 -10" 
+          depth="40" 
+          height="0.1" 
+          width="40" 
+          color="#b3adac"
+        ></a-box>
+
 
         {/* Stronger Lighting */}
         <a-light type="ambient" color="#fff" intensity="3"></a-light>
@@ -186,7 +225,7 @@ export default function VendingMachine3D({
         <a-light type="point" color="#fff" intensity="1.5" position="-2 4 -4" distance="20"></a-light>
 
         {/* Camera */}
-        <a-entity camera position="0 1 -2.5" rotation="-10 0 0"></a-entity>
+        <a-entity camera look-controls position="0 0.95 -2.5" rotation="-10 0 0"></a-entity>
 
         {/* Vending Machine Model */}
         <a-gltf-model
@@ -381,7 +420,6 @@ export default function VendingMachine3D({
           );
         })}
       </a-scene>
-      
       {/* Use Menu component */}
       <Menu
         insertedCoins={insertedCoins}
@@ -400,6 +438,7 @@ export default function VendingMachine3D({
         handleReset={resetLocalState} // Pass the local reset function
         cart={cart}
         change={change}
+        products={products} // Add this line to pass products
       />
     </div>
   );

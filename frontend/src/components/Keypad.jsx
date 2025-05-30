@@ -10,9 +10,11 @@ export default function Keypad({
   handleConfirmPurchase,
   handleReset,
   cart,
-  balance // Add balance prop to check if coins are inserted
+  balance,
+  getProductPrice
 }) {
-  const [showMessage, setShowMessage] = useState(false);
+  const [noCoinMessage, setNoCoinMessage] = useState(false);
+  const [notEnoughCoinMessage, setNotEnoughCoinMessage] = useState(false);
   
   const keypadRows = [
     [1, 2, 3],
@@ -24,11 +26,24 @@ export default function Keypad({
   const handleProductSelection = () => {
     if (balance <= 0) {
       // Show message if no coins inserted
-      setShowMessage(true);
+      setNoCoinMessage(true);
       // Hide message after 3 seconds
-      setTimeout(() => setShowMessage(false), 3000);
+      setTimeout(() => setNoCoinMessage(false), 3000);
+    } else if (productNumberInput && getProductPrice) {
+      // Check if we have enough balance for this product
+      const productPrice = getProductPrice(productNumberInput);
+      
+      if (productPrice && productPrice > balance) {
+        // Show message if not enough balance
+        setNotEnoughCoinMessage(true);
+        // Hide message after 3 seconds
+        setTimeout(() => setNotEnoughCoinMessage(false), 3000);
+      } else {
+        // Only call handleKeypadOk if we have enough balance
+        handleKeypadOk();
+      }
     } else {
-      // Only call handleKeypadOk if we have balance
+      // If no product selected or can't check price, proceed
       handleKeypadOk();
     }
   };
@@ -40,24 +55,26 @@ export default function Keypad({
       </div>
 
       {/* Pop-up message */}
-      {showMessage && (
-        <div className="alert alert-warning position-absolute" 
-             style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 100 }}>
+      {noCoinMessage && (
+        <div className="alert alert-warning keypad-warning-popup w-100">
           Veuillez insérer des pièces avant de sélectionner un produit.
         </div>
       )}
 
-      <div className="d-flex flex-row justify-content-between gap-2 w-100">
+      {/* Pop-up message */}
+      {notEnoughCoinMessage && (
+        <div className="alert alert-warning keypad-warning-popup w-100">
+          Vous n'avez pas assez de piéces.
+        </div>
+      )}
+
+      <div className="keypad-container">
         {/* Left side: Number grid */}
-        <div className="d-flex flex-column w-100">
+        <div className="keypad-numpad">
           {keypadRows.map((row, rowIndex) => (
             <div
               key={`row-${rowIndex}`}
-              className="w-100"
-              style={{
-                display: 'flex',
-                justifyContent: rowIndex === 3 ? 'center' : 'space-between'
-              }}
+              className={`keypad-row ${rowIndex === 3 ? 'last-row' : ''}`}
             >
               {row.map((num) => (
                 <div
@@ -80,23 +97,23 @@ export default function Keypad({
           ))}
         </div>
 
-        {/* Right side: Add and Cancel buttons */}
-        <div className="d-flex flex-column justify-content-start align-items-center w-100">
-          <button className="btn btn-success w-100 m-2 fw-bold" onClick={handleProductSelection}>
+        {/* Right side: Action buttons */}
+        <div className="keypad-actions">
+          <button className="btn btn-success action-btn add-btn" onClick={handleProductSelection}>
             Ajouter
           </button>
 
           <button
-            className="btn btn-primary w-100 m-1 text-white fw-bold"
+            className="btn btn-primary action-btn confirm-btn text-white"
             onClick={handleConfirmPurchase}
             disabled={cart.length === 0}
           >
             Confirmer
           </button>
-          <button className="btn btn-danger w-100 m-1 fw-bold" onClick={onCancel}>
+          <button className="btn btn-danger action-btn cancel-btn" onClick={onCancel}>
             Annuler
           </button>
-          <button className="btn btn-secondary w-100 m-1 fw-bold" onClick={handleReset}>
+          <button className="btn btn-secondary action-btn reset-btn" onClick={handleReset}>
             Réinitialiser
           </button>
         </div>

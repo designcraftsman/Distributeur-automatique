@@ -13,12 +13,13 @@
   min-width: 280px;
   opacity: 1;
   pointer-events: auto;
+  position: relative;
 }
 .vending-keypad.disabled {
   opacity: 0.5;
   pointer-events: none;
 }
-.vending-keypad .vending-keypad-input {
+.vending-keypad-input {
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -28,8 +29,49 @@
   min-height: 32px;
   width: 100%;
 }
-.vending-keypad .vending-keypad-input span {
+.vending-keypad-input span {
   opacity: 0.5;
+}
+.vending-keypad .keypad-warning-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  width: 80%;
+  max-width: 350px;
+  text-align: center;
+}
+.vending-keypad .keypad-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+}
+.vending-keypad .keypad-numpad {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.vending-keypad .keypad-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.vending-keypad .keypad-row.last-row {
+  justify-content: center;
+}
+.vending-keypad .keypad-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
 }
 .vending-keypad .vending-key {
   width: 50px;
@@ -48,6 +90,11 @@
 .vending-keypad .vending-key.clear {
   background: #000;
 }
+.vending-keypad .action-btn {
+  width: 100%;
+  margin: 0.25rem;
+  font-weight: bold;
+}
 
 .vending-panel {
   position: absolute;
@@ -58,7 +105,6 @@
   z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 .vending-cart-keypad {
   display: flex;
   flex-direction: row;
@@ -68,7 +114,6 @@
   width: 380px;
   max-width: 100%;
 }
-
 .vending-btn-group {
   display: flex;
   gap: 1rem;
@@ -78,11 +123,6 @@
 .vending-btn-group button:disabled {
   background-color: #6c757d;
 }
-
-.a-enter-vr {
-  display: none;
-}
-
 .vending-change {
   display: flex;
   align-items: center;
@@ -98,10 +138,13 @@
   margin: 0 2px;
   vertical-align: middle;
 }
-
 .vending-change-text {
   color: white;
   margin-top: 10px;
+}
+
+.a-enter-vr {
+  display: none;
 }
 
 /*!

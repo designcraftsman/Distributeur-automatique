@@ -19,8 +19,15 @@ export default function Menu({
   handleConfirmPurchase,
   handleReset,
   cart,
-  change
+  change,
+  products // Add products prop to access product data
 }) {
+  // Add a function to get product price by product number
+  const getProductPrice = (productNumber) => {
+    const product = products?.find(p => p.id.toString() === productNumber.toString());
+    return product ? product.price : null;
+  };
+
   return (
     <div className="vending-panel rounded  p-2">
       {/* Use CoinPanel component */}
@@ -47,10 +54,11 @@ export default function Menu({
           handleReset={handleReset} // Pass handleReset here
           cart={cart}
           balance={balance} // Pass balance here
+          getProductPrice={getProductPrice} // Pass the getProductPrice function
         /> 
       </div>
      
-              <div className="vending-change text-white bg-dark p-2 rounded">
+      <div className="vending-change text-white bg-dark p-2 rounded">
         <span>Rendu :&nbsp;</span>
         {change && Object.entries(change).length > 0 ? (
           Object.entries(change).map(([coin, qty]) => {
@@ -73,8 +81,6 @@ export default function Menu({
           <span>Aucun</span>
         )}
       </div>
-    
-    
     </div>
   );
 }

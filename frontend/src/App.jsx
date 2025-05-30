@@ -11,6 +11,7 @@ function App() {
   const [message, setMessage] = useState('');
   const [change, setChange] = useState(null);
   const [products, setProducts] = useState([]);
+  const [transactionStatus, setTransactionStatus] = useState(null); // 'success', 'cancel', or null
 
   // Fetch balance on mount and after actions
   const fetchBalance = () => {
@@ -82,12 +83,14 @@ function App() {
       .then(data => {
         if (data.success) {
           setMessage('Purchase successful!');
+          setTransactionStatus('success'); // Set status to success
           console.log('Data returned:', data);
           setChange(data.change);
           setSelectedProductId(null);
-          if (typeof data.balance !== 'undefined') setBalance(data.balance); // <-- set balance from API
+          if (typeof data.balance !== 'undefined') setBalance(data.balance);
         } else {
           setMessage(data.error || 'Purchase failed.');
+          setTransactionStatus(null);
         }
       })
       .catch(() => setMessage('Error confirming purchase.'));
@@ -99,8 +102,8 @@ function App() {
       .then(res => res.json())
       .then(data => {
         setMessage('Transaction cancelled. Refunded.');
+        setTransactionStatus('cancel'); // Set status to cancel
         setSelectedProductId(null);
-        // Show refunded coins in the change display
         setChange(data.change); 
         fetchBalance();
       })
@@ -118,6 +121,7 @@ function App() {
         setMessage('Machine reset to initial state.');
         // Important: Set change to null to completely hide the change display
         setChange(null);
+        setTransactionStatus(null); // Reset transaction status
         
         // Refresh products list
         fetch(`${API_URL}/products`)
@@ -143,6 +147,7 @@ function App() {
         handleReset={handleReset} // Add handleReset here
         message={message}
         change={change}
+        transactionStatus={transactionStatus}
       />
     </div>
   );

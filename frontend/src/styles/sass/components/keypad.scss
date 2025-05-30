@@ -1,49 +1,107 @@
-.vending-keypad {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  padding: 10px;
-  min-width: 280px;
-  opacity: 1;
-  pointer-events: auto;
-
-  &.disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  .vending-keypad-input {
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 6px 0;
-    margin-bottom: 10px;
-    letter-spacing: 2px;
-    min-height: 32px;
-    width: 100%;
-
-    span {
-      opacity: 0.5;
-    }
-  }
-
-  .vending-key {
-    width: 50px;
-    height: 50px;
-    margin: 3px;
-    background: $dark;
-    color: #fff;
+.vending {
+  &-keypad {
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    font-size: 1.3rem;
-    cursor: pointer;
-    user-select: none;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 280px;
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
 
-    &.clear {
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    &-input {
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 6px 0;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      min-height: 32px;
+      width: 100%;
+
+      span {
+        opacity: 0.5;
+      }
+    }
+
+    .keypad {
+      &-warning-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        width: 80%;
+        max-width: 350px;
+        text-align: center;
+      }
+
+      &-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5rem;
+        width: 100%;
+      }
+
+      &-numpad {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      &-row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        &.last-row {
+          justify-content: center;
+        }
+      }
+
+      &-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        width: 100%;
+      }
+    }
+
+    .vending-key {
+      width: 50px;
+      height: 50px;
+      margin: 3px;
       background: $dark;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      user-select: none;
+
+      &.clear {
+        background: $dark;
+      }
+    }
+
+    .action-btn {
+      width: 100%;
+      margin: 0.25rem;
+      font-weight: bold;
     }
   }
 }
