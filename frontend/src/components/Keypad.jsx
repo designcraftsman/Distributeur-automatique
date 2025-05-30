@@ -1,84 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function Keypad({
   productNumberInput,
   handleKeypadPress,
   handleKeypadOk,
   handleKeypadClear,
-  canSelectProduct
+  canSelectProduct,
+  onCancel,
+  handleConfirmPurchase,
+  handleReset,
+  cart,
+  balance // Add balance prop to check if coins are inserted
 }) {
-  // Arrange keypad in a 3x4 grid layout
+  const [showMessage, setShowMessage] = useState(false);
+  
   const keypadRows = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
     [0]
   ];
-  
+
+  const handleProductSelection = () => {
+    if (balance <= 0) {
+      // Show message if no coins inserted
+      setShowMessage(true);
+      // Hide message after 3 seconds
+      setTimeout(() => setShowMessage(false), 3000);
+    } else {
+      // Only call handleKeypadOk if we have balance
+      handleKeypadOk();
+    }
+  };
+
   return (
-    <div
-      className="vending-keypad"
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        background: "#222",
-        borderRadius: 8,
-        padding: 10,
-        minWidth: 280,
-        opacity: canSelectProduct ? 1 : 0.5,
-        pointerEvents: canSelectProduct ? 'auto' : 'none'
-      }}
-    >
-      <div
-        className="vending-keypad-input bg-dark mb-2 fs-6"
-        style={{
-          color: "#fff",
-          textAlign: "center",
-          borderRadius: 6,
-          padding: "6px 0",
-          marginBottom: 10,
-          letterSpacing: 2,
-          minHeight: 32,
-          width: "100%",
-        }}
-      >
-        {productNumberInput || <span style={{ opacity: 0.5 }}>Numéro du produit</span>}
+    <div className={`vending-keypad ${canSelectProduct ? '' : 'disabled'}`}>
+      <div className="vending-keypad-input bg-dark">
+        {productNumberInput || <span>Numéro du produit</span>}
       </div>
-      
-      <div style={{ display: "flex" }}>
-        {/* Left side: Number grid (3x4) */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column",
-          width: "180px",
-        }}>
+
+      {/* Pop-up message */}
+      {showMessage && (
+        <div className="alert alert-warning position-absolute" 
+             style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 100 }}>
+          Veuillez insérer des pièces avant de sélectionner un produit.
+        </div>
+      )}
+
+      <div className="d-flex flex-row justify-content-between gap-2 w-100">
+        {/* Left side: Number grid */}
+        <div className="d-flex flex-column w-100">
           {keypadRows.map((row, rowIndex) => (
-            <div 
-              key={`row-${rowIndex}`} 
-              style={{ 
-                display: "flex", 
-                justifyContent: rowIndex === 3 ? "center" : "space-between"
+            <div
+              key={`row-${rowIndex}`}
+              className="w-100"
+              style={{
+                display: 'flex',
+                justifyContent: rowIndex === 3 ? 'center' : 'space-between'
               }}
             >
               {row.map((num) => (
                 <div
                   key={num}
                   className="vending-key"
-                  style={{
-                    width: 50,
-                    height: 50,
-                    margin: 3,
-                    background: "#444",
-                    color: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 6,
-                    fontSize: "1.3rem",
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
                   onClick={() => handleKeypadPress(num)}
                 >
                   {num}
@@ -86,21 +70,7 @@ export default function Keypad({
               ))}
               {rowIndex === 3 && (
                 <div
-                  className="vending-key"
-                  style={{
-                    width: 50,
-                    height: 50,
-                    margin: 3,
-                    background: "#666",
-                    color: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 6,
-                    fontSize: "1.3rem",
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
+                  className="vending-key clear"
                   onClick={handleKeypadClear}
                 >
                   C
@@ -109,53 +79,26 @@ export default function Keypad({
             </div>
           ))}
         </div>
-        
+
         {/* Right side: Add and Cancel buttons */}
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column",
-          justifyContent: "space-between",
-          alignItems: "center", 
-          flex: 1,
-          paddingLeft: 8,
-        }}>
-          <div
-            className="btn btn-success"
-            style={{
-              width: "90%",
-              height: 100,
-              margin: "4px 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 6,
-              fontSize: "1.1rem",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-            onClick={handleKeypadOk}
-          >
+        <div className="d-flex flex-column justify-content-start align-items-center w-100">
+          <button className="btn btn-success w-100 m-2 fw-bold" onClick={handleProductSelection}>
             Ajouter
-          </div>
-          
-          <div
-            className="btn btn-danger"
-            style={{
-              width: "90%",
-              height: 100,
-              margin: "4px 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 6,
-              fontSize: "1.1rem",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-            onClick={handleKeypadClear}
+          </button>
+
+          <button
+            className="btn btn-primary w-100 m-1 text-white fw-bold"
+            onClick={handleConfirmPurchase}
+            disabled={cart.length === 0}
           >
+            Confirmer
+          </button>
+          <button className="btn btn-danger w-100 m-1 fw-bold" onClick={onCancel}>
             Annuler
-          </div>
+          </button>
+          <button className="btn btn-secondary w-100 m-1 fw-bold" onClick={handleReset}>
+            Réinitialiser
+          </button>
         </div>
       </div>
     </div>

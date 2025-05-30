@@ -1,0 +1,58 @@
+.vending-panel {
+  position: absolute;
+  width: 400px;;
+  background: rgba(34, 34, 34, 0.8);
+  right: 20px;
+  top: 10px;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.vending-cart-keypad {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 16px;
+  width: 380px;
+  max-width: 100%;
+}
+
+.vending-btn-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  font-weight: bold;
+
+
+  button:disabled {
+    background-color: #6c757d;
+  }
+}
+
+.a-enter-vr{
+  display:none;
+}
+
+.vending-change {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+
+  span {
+    margin-right: 4px;
+  }
+
+  img {
+    width: 32px;
+    height: 32px;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+}
+
+.vending-change-text {
+  color: white;
+  margin-top: 10px;
+}

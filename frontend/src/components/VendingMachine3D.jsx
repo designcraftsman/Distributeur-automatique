@@ -24,6 +24,7 @@ export default function VendingMachine3D({
   selectedProductId,
   onConfirmPurchase,
   onCancel,
+  handleReset, // Add this prop to the destructuring
   message,
   change
 }) {
@@ -135,14 +136,18 @@ export default function VendingMachine3D({
   };
 
   // Reset all state
-  const handleReset = () => {
+  const resetLocalState = () => {
     setCart([]);
     setDeliveredProducts([]);
     setProductNumberInput('');
-    setInsertedCoins([]); // <-- Reset inserted coins here
+    setInsertedCoins([]);
+    
     if (typeof setCoinInput === 'function') setCoinInput('');
-    // Optionally, you can call onCancel or trigger a parent reset if needed
-    if (typeof onCancel === 'function') onCancel();
+    
+    // Call the parent's handleReset function
+    if (typeof handleReset === 'function') {
+      handleReset();
+    }
   };
 
   const [animatingCoin, setAnimatingCoin] = useState(null);
@@ -392,7 +397,7 @@ export default function VendingMachine3D({
         balance={balance}
         onCancel={onCancel}
         handleConfirmPurchase={handleConfirmPurchase}
-        handleReset={handleReset}
+        handleReset={resetLocalState} // Pass the local reset function
         cart={cart}
         change={change}
       />

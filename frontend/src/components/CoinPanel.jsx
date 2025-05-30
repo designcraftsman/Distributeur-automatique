@@ -15,6 +15,11 @@ export default function CoinPanel({
           {Array.from({ length: 5 }).map((_, coinCopyIdx) => {
             const uniqueKey = `${coinIdx}-${coinCopyIdx}`;
             if (insertedCoins.includes(uniqueKey) && animatingCoin !== uniqueKey) return null;
+
+            // Calculate dynamic translate values based on coin position
+            const translateX = -200 - coinCopyIdx * 80; // Adjust X translation based on coinCopyIdx
+            const translateY = 250 - coinIdx * 20; // Adjust Y translation based on coinIdx
+
             return (
               <div className='coin' key={uniqueKey} style={{ position: 'relative', display: 'inline-block' }}>
                 <img
@@ -29,7 +34,7 @@ export default function CoinPanel({
                     left: animatingCoin === uniqueKey ? 0 : undefined,
                     top: animatingCoin === uniqueKey ? 0 : undefined,
                     transform: animatingCoin === uniqueKey
-                      ? 'translate(-180px, 150px) scale(0.7)'
+                      ? `translate(${translateX}px, ${translateY}px) scale(0.7)`
                       : 'scale(1)',
                     transition: animatingCoin === uniqueKey
                       ? 'transform 0.7s cubic-bezier(.4,2,.6,1)'

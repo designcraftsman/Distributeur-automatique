@@ -1,6 +1,7 @@
 import React from 'react';
 import CoinPanel from './CoinPanel';
 import Keypad from './Keypad';
+ 
 
 export default function Menu({
   insertedCoins,
@@ -21,15 +22,7 @@ export default function Menu({
   change
 }) {
   return (
-    <div
-      className="vending-panel mx-auto"
-      style={{
-        position: 'absolute',
-        right: 20,
-        top: 30,
-        zIndex: 10
-      }}
-    >
+    <div className="vending-panel rounded  p-2">
       {/* Use CoinPanel component */}
       <CoinPanel
         insertedCoins={insertedCoins}
@@ -41,52 +34,26 @@ export default function Menu({
       />
 
       {/* Cart and Keypad side by side */}
-      <div
-        className="fs-6"
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          gap: 4,
-          marginTop: 16,
-          width: 480,
-          maxWidth: '100%'
-        }}
-      >
+      <div className="vending-cart-keypad">
         {/* Use Keypad component */}
         <Keypad
           productNumberInput={productNumberInput}
           handleKeypadPress={handleKeypadPress}
           handleKeypadOk={handleKeypadOk}
           handleKeypadClear={handleKeypadClear}
-          canSelectProduct={balance > 0} // Enable keypad if any balance available
-        />
+          canSelectProduct={true} // Always enable keypad
+          onCancel={onCancel}
+          handleConfirmPurchase={handleConfirmPurchase}
+          handleReset={handleReset} // Pass handleReset here
+          cart={cart}
+          balance={balance} // Pass balance here
+        /> 
       </div>
-
-      <div className="d-flex gap-1 mt-3 fw-bold">
-        <button className="btn-primary btn col-4 text-white" onClick={onCancel}>
-          Annuler
-        </button>
-        <button
-          className="btn btn-primary col-4 text-white"
-          onClick={handleConfirmPurchase}
-          disabled={cart.length === 0}
-        >
-          Confirmer
-        </button>
-        <button
-          className="btn btn-primary col-4 text-white"
-          onClick={handleReset}
-          type="button"
-        >
-          Reset
-        </button>
-      </div>
-
-      {change && typeof change === 'object' && (
-        <div className="d-flex align-items-center flex-wrap mt-3">
-          <span style={{ marginRight: 8 }}>Change:&nbsp;</span>
-          {Object.entries(change).map(([coin, qty]) => {
+     
+              <div className="vending-change text-white bg-dark p-2 rounded">
+        <span>Rendu :&nbsp;</span>
+        {change && Object.entries(change).length > 0 ? (
+          Object.entries(change).map(([coin, qty]) => {
             let coinImg;
             if (coin === '10' || coin === '10.0') coinImg = coins[0].img;
             else if (coin === '5' || coin === '5.0') coinImg = coins[1].img;
@@ -95,36 +62,19 @@ export default function Menu({
             else if (coin === '0.5') coinImg = coins[4].img;
             else coinImg = null;
             return (
-              <span
-                key={coin}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  marginRight: 14
-                }}
-              >
+              <span key={coin}>
                 {qty} x
-                {coinImg && (
-                  <img
-                    src={coinImg}
-                    alt={`${coin} MAD`}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      margin: '0 4px',
-                      verticalAlign: 'middle'
-                    }}
-                  />
-                )}
-                {!coinImg && <span style={{ margin: '0 4px' }}>{coin} MAD</span>}
+                {coinImg && <img src={coinImg} alt={`${coin} MAD`} />}
+                {!coinImg && <span>{coin} MAD</span>}
               </span>
             );
-          })}
-        </div>
-      )}
-      {change && typeof change !== 'object' && (
-        <div style={{ color: 'white', marginTop: 10 }}>Change: {change} MAD</div>
-      )}
+          })
+        ) : (
+          <span>Aucun</span>
+        )}
+      </div>
+    
+    
     </div>
   );
 }

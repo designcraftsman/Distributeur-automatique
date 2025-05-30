@@ -100,10 +100,31 @@ function App() {
       .then(data => {
         setMessage('Transaction cancelled. Refunded.');
         setSelectedProductId(null);
-        setChange(data.change); // <-- Show refunded coins
+        // Show refunded coins in the change display
+        setChange(data.change); 
         fetchBalance();
       })
       .catch(() => setMessage('Error cancelling transaction.'));
+  };
+
+  // Reset everything to initial state
+  const handleReset = () => {
+    fetch(`${API_URL}/reset`, { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        setSelectedProductId(null); // Clear the cart
+        setCoinInput(''); // Clear coin input
+        setBalance(0); // Reset balance
+        setMessage('Machine reset to initial state.');
+        // Important: Set change to null to completely hide the change display
+        setChange(null);
+        
+        // Refresh products list
+        fetch(`${API_URL}/products`)
+          .then(res => res.json())
+          .then(data => setProducts(data.products || []));
+      })
+      .catch(() => setMessage('Error resetting machine.'));
   };
 
   return (
@@ -119,6 +140,7 @@ function App() {
         selectedProductId={selectedProductId}
         onConfirmPurchase={handleConfirmPurchase}
         onCancel={handleCancel}
+        handleReset={handleReset} // Add handleReset here
         message={message}
         change={change}
       />

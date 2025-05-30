@@ -25,18 +25,14 @@ exports.getBalance = (req, res) => {
 
 exports.cancelTransaction = (req, res) => {
   try {
-    // Calculate the change before cancelling
-    const refund = vm.paymentProcessor.getBalance();
-    let change = {};
-    if (refund > 0) {
-      change = vm.paymentProcessor.calculateChange(0);
-    }
-    vm.cancelTransaction();
-    console.log('Transaction canceled');
+    // Let the service method handle the change calculation and return it
+    const change = vm.cancelTransaction();
+    console.log('Transaction canceled, change:', change);
+    
     res.json({ 
       success: true,
       message: 'Transaction canceled',
-      change, 
+      change: change, // Use the change returned from cancelTransaction
       cart: [] 
     });
   } catch (error) {
@@ -99,6 +95,26 @@ exports.confirmPurchase = (req, res) => {
       change,
       dispensedProducts, // Include dispensed products in the response
       balance: vm.paymentProcessor.getBalance()
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      success: false,
+      error: error.message 
+    });
+  }
+};
+
+exports.resetMachine = (req, res) => {
+  try {
+    // Reset the machine state without returning change
+    vm.resetMachine();
+    console.log('Machine reset');
+    res.json({ 
+      success: true,
+      message: 'Machine reset successfully',
+      balance: 0,
+      cart: [],
+      change: {} // No change to return
     });
   } catch (error) {
     res.status(400).json({ 
