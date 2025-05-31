@@ -79,22 +79,46 @@ You can set up the project using one of two methods: **Standard Installation** o
    cd distributeur-automatique
    ```
 
-2. Start the application using Docker Compose:
+2. Pull the Docker images:
+   ```bash
+   docker pull designcraftsman/vending-machine-api:latest
+   docker pull designcraftsman/vending-machine-frontend:latest
+   ```
+
+3. Start the application using Docker Compose:
    ```bash
    docker-compose up --build
    ```
 
-3. Access the application:
+4. Access the application:
    - Frontend: `http://localhost:3000`
    - API: `http://localhost:4200`
 
+#### Additional Docker Commands
+- Stop the containers:
+  ```bash
+  docker-compose down
+  ```
+- Rebuild and start the containers:
+  ```bash
+  docker-compose up --build
+  ```
+- Run in detached mode:
+  ```bash
+  docker-compose up -d
+  ```
+
+---
+
+## Documentation
+Access the full documentation for the project here:  
+[Distributeur Automatique Documentation](https://vending-machine-documentation.netlify.app/)
 
 ---
 
 ## Video Demonstration
-Watch the full simulation walkthrough:
+Watch the full simulation walkthrough:  
 [![Vending Machine Simulation](https://img.youtube.com/vi/oUYrvtr8TXY/0.jpg)](https://www.youtube.com/watch?v=oUYrvtr8TXY)
-
 
 ---
 
