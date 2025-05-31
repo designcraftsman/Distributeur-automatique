@@ -111,9 +111,8 @@ Access the full documentation for the project here:
 ---
 
 ## Video Demonstration
-Watch the full simulation walkthrough:
-
-[![Vending Machine Simulation](https://img.youtube.com/vi/oUYrvtr8TXY/0.jpg)](https://www.youtube.com/watch?v=oUYrvtr8TXY)
+Watch the full simulation walkthrough:  
+[https://www.youtube.com/watch?v=oUYrvtr8TXY](https://www.youtube.com/watch?v=oUYrvtr8TXY)
 
 
 ---
