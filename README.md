@@ -115,9 +115,6 @@ Watch the full simulation walkthrough:
 
 [![Vending Machine Simulation](https://img.youtube.com/vi/oUYrvtr8TXY/0.jpg)](https://www.youtube.com/watch?v=oUYrvtr8TXY)
 
-Alternatively, embed the video directly below:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/oUYrvtr8TXY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ---
 
