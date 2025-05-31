@@ -52,9 +52,9 @@ You can set up the project using one of two methods: **Standard Installation** o
 2. Open the project in VS Code:
    
 
-3. Set up the backend:
+3. Set up the api:
    ```bash
-   cd backend
+   cd api
    npm install
    npm start
    ```
