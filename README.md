@@ -49,17 +49,20 @@ You can set up the project using one of two methods: **Standard Installation** o
    cd distributeur-automatique
    ```
 
-2. Set up the backend:
+2. Open the project in VS Code:
+   
+
+3. Set up the backend:
    ```bash
-   cd api
+   cd backend
    npm install
    npm start
    ```
    The API will be available at `http://localhost:4200`.
 
-3. Set up the frontend:
+4. In a new terminal, set up the frontend:
    ```bash
-   cd ../frontend
+   cd frontend
    npm install
    npm start
    ```
@@ -94,19 +97,10 @@ You can set up the project using one of two methods: **Standard Installation** o
    - Frontend: `http://localhost:3000`
    - API: `http://localhost:4200`
 
-#### Additional Docker Commands
-- Stop the containers:
-  ```bash
-  docker-compose down
-  ```
-- Rebuild and start the containers:
-  ```bash
-  docker-compose up --build
-  ```
-- Run in detached mode:
-  ```bash
-  docker-compose up -d
-  ```
+---
+
+### Note
+Both installation methods provide the same functionality. Choose the method that best fits your environment and preferences. Docker provides a more isolated and consistent environment but requires Docker to be installed.
 
 ---
 
