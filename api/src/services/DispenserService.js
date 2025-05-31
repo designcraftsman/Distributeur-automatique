@@ -1,11 +1,36 @@
 class Dispenser {
-  dispenseProduct(product) {
-    console.log(`Dispensing: ${product.name}`);
+  constructor() {
+    this.dispensedProducts = [];
+    this.dispensedChange = {};
+  }
 
+  dispenseProduct(product) {
+    if (!product) {
+      console.error('Error: No product to dispense.');
+      return;
+    }
+    this.dispensedProducts.push(product);
   }
 
   dispenseChange(change) {
-    console.log('Returning change:', change);
+    if (!change || Object.keys(change).length === 0) {
+      console.error('Error: No change to return.');
+      return;
+    }
+    this.dispensedChange = change;
+  }
+
+  getDispensedProducts() {
+    return this.dispensedProducts;
+  }
+
+  getDispensedChange() {
+    return this.dispensedChange;
+  }
+
+  resetDispenser() {
+    this.dispensedProducts = [];
+    this.dispensedChange = {};
   }
 }
 
